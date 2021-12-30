@@ -64,6 +64,7 @@ export default {
 
       this.cards.map(item => {
         arrayNames.push(item.region)
+        console.log(item.region);
       })
 
       return arrayNames

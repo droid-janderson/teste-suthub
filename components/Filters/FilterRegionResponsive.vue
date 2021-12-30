@@ -27,8 +27,6 @@ export default {
   name: 'FilterRegionResponsive',
   data () {
     return {
-      select: null,
-      selected: null,
       selectName: null,
       cards: []
     }
@@ -55,7 +53,6 @@ export default {
         return
       } else {
         this.$emit('getCountry', this.selectName)
-        console.log(this.cards);
       }
     }
   },
@@ -66,7 +63,6 @@ export default {
 
       this.cards.map(item => {
         arrayNames.push(item.region)
-        this.selected = 'region'
       })
 
       return arrayNames

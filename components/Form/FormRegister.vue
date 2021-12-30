@@ -24,8 +24,7 @@
           <v-row>
             <v-col cols="12" md="3">
               <v-text-field
-                v-model="user.firstname"
-                :rules="nameRules"
+                v-model.trim="user.firstname"
                 :counter="10"
                 label="Nome*"
                 placeholder="Primeiro nome..."
@@ -36,7 +35,6 @@
             <v-col cols="12" md="3">
               <v-text-field
                 v-model="user.lastname"
-                :rules="lastnameRules"
                 :counter="25"
                 label="Sobrenome*"
                 placeholder="Sobrenome..."
@@ -194,20 +192,24 @@
 </template>
 
 <script>
+import { useVuelidate } from '@vuelidate/core'
+import { required, minLength } from '@vuelidate/validators'
 import { VMoney } from 'v-money'
 import { cpf } from 'cpf-cnpj-validator'
 
 export default {
   name: 'FormRegister',
+  setup: () => ({ v$: useVuelidate() }),
   data () {
     return {
       valid: false,
       position: 1,
+      firstname: '',
       user: {
-        firstname: '',
         lastname: '',
         date: '',
         cpf: null,
+        income: 100000,
         pet: '',
         breed: '',
         address: {
@@ -216,8 +218,7 @@ export default {
           district: '',
           city: '',
           state: ''
-        },
-        income: 100000
+        }
       },
       cepValidate: null,
       money: {
@@ -236,17 +237,18 @@ export default {
         'SRD (Sem Raça Definida)',
         'outro'
       ],
-      cats: ['Persa', 'Siamês', 'Maine Coon', 'Siberiano', 'Serval', 'outro'],
-      nameRules: [
-        v => !!v || 'Nome é obrigatório',
-        v => v.length <= 10 || 'Name must be less than 10 characters'
-      ],
-      lastnameRules: [
-        v => !!v || 'Sobrenome é obrigatório',
-        v => v.length <= 25 || 'Name must be less than 25 characters'
-      ]
+      cats: ['Persa', 'Siamês', 'Maine Coon', 'Siberiano', 'Serval', 'outro']
     }
   },
+  validations () {
+    return {
+      user: {
+        firstname: { minLength: minLength(3), required },
+        lastname: { required }
+      }
+    }
+  },
+
   directives: { money: VMoney },
 
   methods: {
@@ -271,10 +273,10 @@ export default {
 
         const adress = response.data
 
-        this.user.address.cep = adress.cep;
-        this.user.address.street  = adress.logradouro;
-        this.user.address.district = adress.bairro;
-        this.user.address.city  = adress.localidade
+        this.user.address.cep = adress.cep
+        this.user.address.street = adress.logradouro
+        this.user.address.district = adress.bairro
+        this.user.address.city = adress.localidade
         this.user.address.state = adress.uf
       }
     }

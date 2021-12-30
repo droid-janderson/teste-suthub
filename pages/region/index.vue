@@ -4,8 +4,8 @@
     <filter-region-responsive class="d-flex d-sm-none" @getCountry="getData" />
     <div class="container-cards">
       <country-coordinates
-        v-for="card in paginatedItems"
-        :key="card.name"
+        v-for="(card, index) in paginatedItems"
+        :key="index"
         :card="card"
       />
     </div>

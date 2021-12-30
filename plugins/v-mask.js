@@ -1,6 +1,4 @@
-import Vue from 'vue'
-import vueMask from 'v-mask';
-import vueMoney from 'v-money';
+import Vue from "vue";
+import vueMask from "v-mask";
 
 Vue.use(vueMask);
-Vue.use(vueMoney, { precision: 2 });

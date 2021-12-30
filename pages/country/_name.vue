@@ -34,7 +34,7 @@ export default {
       pagination: {
         page: 1,
         total: 0,
-        perPage: 12,
+        perPage: 9,
         visible: 7
       },
       country: {},
