@@ -7,6 +7,7 @@
         v-for="item in paginatedItems"
         :key="item.name"
         :card="item"
+        @getLanguage="toLanguage"
       />
     </div>
     <div class="container-pagination">
@@ -66,6 +67,9 @@ export default {
         throw new Error(error)
       }
     },
+    toLanguage (language) {
+      this.$router.push({ path: '/country', query: { language: language } })
+    }
   },
   computed: {
     paginatedItems () {

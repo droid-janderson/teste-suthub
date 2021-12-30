@@ -3,11 +3,11 @@
     <country-info class="mb-10" :card="country" />
     <span style="font-size: 18px;">Países Vizinhos</span>
     <div class="container-cards">
-      <country-coordinates
+      <country-card
         v-for="item in paginatedItems"
         :key="item.name"
         :card="item"
-
+        @getLanguage="toLanguage"
       />
     </div>
     <div class="container-pagination">
@@ -23,10 +23,10 @@
 </template>
 
 <script>
-import CountryCoordinates from '../../components/Country/CountryCoordinates.vue'
+import CountryCard from '../../components/Country/CountryCard.vue'
 import CountryInfo from '../../components/Country/CountryInfo.vue'
 export default {
-  components: { CountryInfo, CountryCoordinates },
+  components: { CountryInfo, CountryCard },
 
   data () {
     return {
@@ -66,6 +66,9 @@ export default {
       } catch (error) {
         throw new Error(error)
       }
+    },
+    toLanguage (language) {
+      this.$router.push({ path: '/country', query: { language: language } })
     }
   },
   computed: {

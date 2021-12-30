@@ -69,10 +69,9 @@
             </v-col>
             <v-col cols="12" md="3">
               <v-text-field
-                v-mask="'####,##'"
-                v-model="user.income"
+                v-money="money"
+                v-model.lazy="user.income"
                 label="Renda mensal*"
-                prepend-icon="mdi-currency-brl"
                 required
               ></v-text-field>
             </v-col>
@@ -88,7 +87,7 @@
             <v-col cols="12" md="2">
               <v-text-field
                 v-mask="'#####-###'"
-                v-model="user.address.cep"
+                v-model="cepValidate"
                 label="CEP*"
                 placeholder="00000-000"
                 required
@@ -98,7 +97,6 @@
           <v-row>
             <v-col cols="12" md="3">
               <v-text-field
-                v-mask="'#####-###'"
                 v-model="user.address.street"
                 label="Rua*"
                 required
@@ -181,7 +179,14 @@
           <v-btn @click="position = 2" class="ma-2" outlined color="#666666">
             Voltar
           </v-btn>
-          <button-submit />
+          <v-btn
+            class="ma-2"
+            color="#00837e"
+            style="color: #fff; font-weight: 400;"
+            @click="onSubmit()"
+          >
+            Enviar
+          </v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -189,9 +194,10 @@
 </template>
 
 <script>
-import ButtonSubmit from '../Buttons/ButtonSubmit.vue'
+import { VMoney } from 'v-money'
+import { cpf } from 'cpf-cnpj-validator'
+
 export default {
-  components: { ButtonSubmit },
   name: 'FormRegister',
   data () {
     return {
@@ -204,14 +210,22 @@ export default {
         cpf: null,
         pet: '',
         breed: '',
-        income: '',
         address: {
           cep: null,
           street: '',
           district: '',
           city: '',
           state: ''
-        }
+        },
+        income: 100000
+      },
+      cepValidate: null,
+      money: {
+        decimal: ',',
+        thousands: '.',
+        prefix: 'R$ ',
+        precision: 2,
+        masked: false
       },
       pets: ['cão', 'gato'],
       dogs: [
@@ -231,6 +245,38 @@ export default {
         v => !!v || 'Sobrenome é obrigatório',
         v => v.length <= 25 || 'Name must be less than 25 characters'
       ]
+    }
+  },
+  directives: { money: VMoney },
+
+  methods: {
+    async onSubmit () {
+      localStorage.setItem('user', JSON.stringify(this.user))
+
+      try {
+        const user = localStorage.getItem('user')
+        console.log(JSON.parse(user))
+      } catch (error) {
+        throw new Error(error)
+      }
+    }
+  },
+
+  watch: {
+    async cepValidate () {
+      if (this.cepValidate.length == 9) {
+        const response = await this.$axios.get(
+          `https://viacep.com.br/ws/${this.cepValidate}/json/`
+        )
+
+        const adress = response.data
+
+        this.user.address.cep = adress.cep;
+        this.user.address.street  = adress.logradouro;
+        this.user.address.district = adress.bairro;
+        this.user.address.city  = adress.localidade
+        this.user.address.state = adress.uf
+      }
     }
   }
 }

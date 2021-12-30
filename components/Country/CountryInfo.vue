@@ -24,6 +24,7 @@
             >{{ item.name }};</span
           >
         </span>
+        <span>Coordenadas: {{ card.latlng }}</span>
       </div>
     </div>
     <div class="flex-column" id="card-responsive">
@@ -40,7 +41,6 @@
         <span>Região: {{ card.region }}</span>
         <span>Sub-região: {{ card.subregion }} </span>
         <span>População: {{ card.population }}</span>
-        <span>Latitude: {{ card.latlng }}</span>
         <span
           >Linguas:
           <span

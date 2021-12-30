@@ -9,14 +9,9 @@
       color="#006961"
       @click="toHome()"
     >
-      <v-icon
-          color="#006961"
-          v-bind="attrs"
-          v-on="on"
-          class="mr-3"
-        >
-          mdi-home
-        </v-icon>
+      <v-icon color="#006961" v-bind="attrs" v-on="on" class="mr-3">
+        mdi-home
+      </v-icon>
       Home
     </v-btn>
     <v-btn
@@ -25,13 +20,9 @@
       class="font-weight-regular text-capitalize hidden-sm-and-up"
       @click="toHome"
     >
-      <v-icon
-          color="#006961"
-          v-bind="attrs"
-          v-on="on"
-        >
-          mdi-home
-        </v-icon>
+      <v-icon color="#006961" v-bind="attrs" v-on="on">
+        mdi-home
+      </v-icon>
     </v-btn>
   </div>
 </template>
@@ -40,7 +31,7 @@
 export default {
   name: 'BackButton',
   methods: {
-    toHome() {
+    toHome () {
       this.$router.push({ path: '/' })
     }
   }

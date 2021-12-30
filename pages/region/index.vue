@@ -65,6 +65,7 @@ export default {
     async getData (selectName) {
       try {
         const response = await this.$axios.$get(`/region/${selectName}`)
+        console.log(response);
 
         this.$router.push({ path: '/region' })
 
