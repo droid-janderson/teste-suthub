@@ -335,18 +335,18 @@ export default {
   methods: {
     async onSubmit () {
       alert(
-        `${this.user.firstName},
-        ${this.user.lastName},
-        ${this.user.age},
-        ${this.user.cpf},
-        ${this.user.income},
-        ${this.user.pet},
-        ${this.user.breed},
-        ${this.user.address.cep},
-        ${this.user.address.street},
-        ${this.user.address.district},
-        ${this.user.address.city},
-        ${this.user.address.state}`
+        `
+        name: ${this.user.firstName} ${this.user.lastName},
+        idade: ${this.user.age},
+        CPF: ${this.user.cpf},
+        Renda Salarial: ${this.user.income},
+        Pet: ${this.user.pet},
+        Raça do pet: ${this.user.breed},
+        Cep: ${this.user.address.cep},
+        Rua: ${this.user.address.street},
+        Bairro: ${this.user.address.district},
+        Cidade: ${this.user.address.city} (${this.user.address.state})
+        `
       )
     }
   },
