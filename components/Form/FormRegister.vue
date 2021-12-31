@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid">
+  <v-form>
     <v-stepper alt-labels v-model="position">
       <v-stepper-header>
         <v-stepper-step :complete="position > 1" step="1">
@@ -24,46 +24,69 @@
           <v-row>
             <v-col cols="12" md="3">
               <v-text-field
-                v-model.trim="user.firstname"
+                v-model="user.firstName"
                 :counter="10"
                 label="Nome*"
                 placeholder="Primeiro nome..."
-                required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.firstName.required">
+                Campo obrigatório
+              </div>
+              <div class="error" v-if="!$v.user.firstName.minLength">
+                Mínimo de 4 letras.
+              </div>
             </v-col>
 
             <v-col cols="12" md="3">
               <v-text-field
-                v-model="user.lastname"
+                v-model="user.lastName"
                 :counter="25"
                 label="Sobrenome*"
                 placeholder="Sobrenome..."
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.lastName.required">
+                Campo obrigatório
+              </div>
+              <div class="error" v-if="!$v.user.lastName.minLength">
+                Mínimo de 4 letras.
+              </div>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="12" md="3">
               <v-text-field
                 v-mask="'##/##/####'"
-                v-model="user.date"
+                v-model="date"
                 label="Data de Nascimento*"
                 placeholder="DD/MM/AAAA"
                 persistent-hint
                 prepend-inner-icon="mdi-calendar"
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.age.required">
+                Campo obrigatório
+              </div>
+              <div class="error" v-if="!$v.user.age.between">
+                Você tem que ter mais de 18 e ter menos de 65;
+              </div>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="12" md="3">
               <v-text-field
                 v-mask="'###.###.###-##'"
-                v-model="user.cpf"
+                v-model="cpfData"
                 label="CPF*"
                 placeholder="000.000.000-00"
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.cpf.required">
+                Campo obrigatório
+              </div>
+              <div v-if="cpfValidation == false" class="error">
+                CPF Inválido!
+              </div>
             </v-col>
             <v-col cols="12" md="3">
               <v-text-field
@@ -90,6 +113,9 @@
                 placeholder="00000-000"
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.address.cep.required">
+                Campo obrigatório
+              </div>
             </v-col>
           </v-row>
           <v-row>
@@ -99,6 +125,9 @@
                 label="Rua*"
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.address.street.required">
+                Campo obrigatório
+              </div>
             </v-col>
             <v-col cols="12" md="3">
               <v-text-field
@@ -106,6 +135,9 @@
                 label="Bairro*"
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.address.district.required">
+                Campo obrigatório
+              </div>
             </v-col>
           </v-row>
           <v-row>
@@ -115,6 +147,9 @@
                 label="Cidade*"
                 required
               ></v-text-field>
+              <div class="error" v-if="!$v.user.address.city.required">
+                Campo obrigatório
+              </div>
             </v-col>
             <v-col cols="12" md="1">
               <v-text-field
@@ -166,7 +201,7 @@
           <v-row>
             <v-col cols="12" md="3" v-if="user.breed == 'outro'">
               <v-text-field
-                v-model="user.outro"
+                v-model="user.other"
                 label="Outro*"
                 placeholder="nome da raça..."
                 required
@@ -192,8 +227,12 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import { required, minLength } from '@vuelidate/validators'
+import {
+  required,
+  minLength,
+  between,
+  minValue
+} from 'vuelidate/lib/validators'
 import { VMoney } from 'v-money'
 import { cpf } from 'cpf-cnpj-validator'
 
@@ -202,16 +241,16 @@ export default {
   setup: () => ({ v$: useVuelidate() }),
   data () {
     return {
-      valid: false,
       position: 1,
-      firstname: '',
       user: {
-        lastname: '',
-        date: '',
+        firstName: '',
+        lastName: '',
+        age: '',
         cpf: null,
         income: 100000,
         pet: '',
         breed: '',
+        other: '',
         address: {
           cep: null,
           street: '',
@@ -220,6 +259,9 @@ export default {
           state: ''
         }
       },
+      cpfData: null,
+      cpfValidation: null,
+      date: '',
       cepValidate: null,
       money: {
         decimal: ',',
@@ -240,11 +282,50 @@ export default {
       cats: ['Persa', 'Siamês', 'Maine Coon', 'Siberiano', 'Serval', 'outro']
     }
   },
-  validations () {
-    return {
-      user: {
-        firstname: { minLength: minLength(3), required },
-        lastname: { required }
+
+  validations: {
+    user: {
+      firstName: {
+        required,
+        minLength: minLength(4)
+      },
+      lastName: {
+        required,
+        minLength: minLength(4)
+      },
+      age: {
+        required,
+        between: between(18, 65)
+      },
+      cpf: {
+        required
+      },
+      income: {
+        required,
+        minValue: minValue(1000)
+      },
+      pet: {
+        required
+      },
+      breed: {
+        required
+      },
+      address: {
+        cep: {
+          required
+        },
+        street: {
+          required
+        },
+        district: {
+          required
+        },
+        city: {
+          required
+        },
+        state: {
+          required
+        }
       }
     }
   },
@@ -253,18 +334,33 @@ export default {
 
   methods: {
     async onSubmit () {
-      localStorage.setItem('user', JSON.stringify(this.user))
-
-      try {
-        const user = localStorage.getItem('user')
-        console.log(JSON.parse(user))
-      } catch (error) {
-        throw new Error(error)
-      }
+      alert(
+        `${this.user.firstName},
+        ${this.user.lastName},
+        ${this.user.age},
+        ${this.user.cpf},
+        ${this.user.income},
+        ${this.user.pet},
+        ${this.user.breed},
+        ${this.user.address.cep},
+        ${this.user.address.street},
+        ${this.user.address.district},
+        ${this.user.address.city},
+        ${this.user.address.state}`
+      )
     }
   },
 
   watch: {
+    cpfData () {
+      this.cpfValidation = cpf.isValid(this.cpfData)
+
+      if (!this.cpfValidation) {
+        return
+      } else {
+        this.user.cpf = this.cpfData
+      }
+    },
     async cepValidate () {
       if (this.cepValidate.length == 9) {
         const response = await this.$axios.get(
@@ -279,9 +375,45 @@ export default {
         this.user.address.city = adress.localidade
         this.user.address.state = adress.uf
       }
+    },
+    date () {
+      if (this.date.length < 10) {
+        return
+      }
+
+      let day = this.date.split('/')[0]
+      let month = this.date.split('/')[1]
+      let year = this.date.split('/')[2]
+
+      let date = new Date()
+      let yearNow = date.getFullYear()
+      let monthNow = date.getMonth() + 1
+      let dayNow = date.getDate()
+      year = +year
+      month = +month
+      day = +day
+      this.user.age = yearNow - year
+
+      if (monthNow < month || (monthNow == month && dayNow < day)) {
+        this.user.age--
+      }
+
+      this.user.age = this.user.age < 0 ? 0 : this.user.age
+
+      if (this.user.age < 18 || this.user.age > 65) {
+      }
     }
   }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.valid {
+  border-color: #5a5;
+  background: #efe;
+}
+
+.valid:focus {
+  outline-color: #8e8;
+}
+</style>

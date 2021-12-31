@@ -12,11 +12,6 @@
 import FormRegister from '../components/Form/FormRegister.vue'
 export default {
   components: { FormRegister },
-  methods: {
-    getUser () {
-
-    }
-  }
 }
 </script>
 

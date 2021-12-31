@@ -9,7 +9,7 @@
       color="#006961"
       @click="toHome()"
     >
-      <v-icon color="#006961" v-bind="attrs" v-on="on" class="mr-3">
+      <v-icon color="#006961" class="mr-3">
         mdi-home
       </v-icon>
       Home
@@ -18,9 +18,9 @@
       elevation="0"
       width="40"
       class="font-weight-regular text-capitalize hidden-sm-and-up"
-      @click="toHome"
+      @click="toHome()"
     >
-      <v-icon color="#006961" v-bind="attrs" v-on="on">
+      <v-icon color="#006961">
         mdi-home
       </v-icon>
     </v-btn>
